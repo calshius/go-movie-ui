@@ -1,0 +1,74 @@
+<!-- Load c3.css -->
+<link href="c3/c3.css" rel="stylesheet">
+<link href="chart.css" rel="stylesheet">
+
+<!-- Load d3.js and c3.js -->
+<script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+<script src="c3/c3.js"></script>
+
+<div class="container">
+    <form>
+        <h3>Get movie details</h3>
+
+        <!-- <input type="text" id="mySearch" placeholder="Movie name"> -->
+
+        <div class="form-group">
+            <input type="text" id="search" required="required" />
+            <label for="input" class="control-label">Movie name</label><i class="bar"></i>
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="button" onclick="fetchMovieData()"><span>Submit</span></button>
+        </div>
+
+        <div id="chart"></div>
+        <script>
+            const url = 'http://localhost:8080/movie?name=';
+
+
+            var barChart = c3.generate({
+                bindto: '#chart',
+                data: {
+                    columns: [
+                        ['budget', 100],
+                        ['revenue', 100]
+                    ],
+                    type: 'bar',
+                    labels: {
+                        format: {
+                            budget: d3.format('$'),
+                            revenue: d3.format('$')
+                        }
+                    },
+                    colors: {
+                        budget: '#ff0000',
+                        revenue: '#00ff00'
+                    }
+                },
+                axis: {
+                    x: {
+                        type: 'category',
+                        categories: ['report']
+                    },
+                    y: {
+                        show: false
+                    }
+                }
+            });
+
+            function fetchMovieData() {
+                var x = document.getElementById("search").value;
+                fetch(url + x)
+                    .then((resp) => resp.json())
+                    .then((data) => {
+                        barChart.load({
+                            columns: [
+                                ['budget', data.budget],
+                                ['revenue', data.revenue]
+                            ]
+                        })
+                    })
+            };
+        </script>
+    </form>
+</div>
